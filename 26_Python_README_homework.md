@@ -26,6 +26,7 @@
 
   **6**
 
+СКРИПТ:
 ```python
 #!/usr/bin/env python3
 import sys
@@ -49,6 +50,7 @@ print('Добавили единицу как число: ' + str(i))
 **Videos**  
 **Total: 22**  
 
+СКРИПТ:
 ```python
 #!/usr/bin/env python3
 
@@ -81,6 +83,7 @@ print("Files count :" + str(files))
 **user@user:~$ c:\windows1**  
 **c:\windows1 - not exist**  
 
+СКРИПТ:
 ```python
 #!/usr/bin/env python3
 
