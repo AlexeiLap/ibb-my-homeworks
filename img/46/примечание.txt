@@ -1,0 +1,102 @@
+https://github.com/netology-code/sib-ecommerce-diploma
+
+krweb-backend-1
+docker exec -ti krweb-backend-1 /bin/sh
+
+31-сонар куб
+docker run -d --name sonarqube -p 9000:9000 sonarqube
+https://itsecforu.ru/2020/04/07/%F0%9F%90%B3-%D0%B0%D0%BD%D0%B0%D0%BB%D0%B8%D0%B7-%D0%BA%D0%BE%D0%B4%D0%B0-%D1%81-%D0%BF%D0%BE%D0%BC%D0%BE%D1%89%D1%8C%D1%8E-sonarqube-%D0%BD%D0%B0-docker/
+ключ для сканера
+necommerce-frontend
+Analyze "necommerce-frontend": sqp_627fc1494f4209c279601b08acccd3ac21b339dd
+запустить из корня проекта сканирование фронт энд
+C:\tools\sonarqube\bin\sonar-scanner.bat -D"sonar.projectKey=necommerce-frontend" -D"sonar.sources=." -D"sonar.host.url=http://localhost:9000" -D"sonar.login=sqp_627fc1494f4209c279601b08acccd3ac21b339dd"
+
+Analyze "necommerce-backend": sqp_3c2fe0ea9785be380aedf2dedd7c9a48803f06b7
+запустить из корня проекта сканирование
+C:\tools\sonarqube\bin\sonar-scanner.bat -D"sonar.projectKey=necommerce-backend" -D"sonar.sources=." -D"sonar.host.url=http://localhost:9000" -D"sonar.login=sqp_3c2fe0ea9785be380aedf2dedd7c9a48803f06b7"
+
+32-поиск ключей в репозиториях
+
+сканирование репозитории на наличие секретов
+https://github.com/netology-code/necommerce-frontend.git
+trufflehog https://github.com/netology-code/necommerce-frontend.git | tee -a logfront.txt
+public.key
+private.key
+symmetric.key
+
+сканирование бэка
+https://github.com/netology-code/necommerce-backend.git
+trufflehog https://github.com/netology-code/necommerce-backend.git | tee -a logback.txt
+ничего не нашел особого
+узнали что есть пользователь админ
+login=admin&pass=5OKn4ZevXxCWHbEHGejhYnLSksTJ6uAzJ5t76WXe1JTc_gxOlwS7bpAjsm7DT9-S8TrochsbQXmDt995CSZPLA
+
+и пользователь менеджер
+login=manager&pass=secret
+
+41-попробовать взломать пароль администратора
+Попробовать атаку на админа перебором паролей
+https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/100k-most-used-passwords-NCSC.txt
+https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials
+
+минус в том что атака допускается переборами паролей и если потратить больше времени то возможно получится подобрать пароли
+Избежать таких атак можно было путем:
+Ограничить количество попыток ввода логина и пароля для одного логина.
+Например после 10 неудачных попыток делать временную блокировку чтобы метод не проверял дальше логины и пароли.
+А после 20 неудачных попыток делать полную блокировку чтобы пользователь восстанавливал пароль через методы восстановления пароля.
+
+Тогда атака была бы невозможна.
+33-sql инъекции
+НЕ ПРОХОДИТ
+
+34-проверить robots.txt
+http://localhost:8888/robots.txt
+
+41-попробовать войти, посмотреть что содержат токены какая информация передается
+ничего не содержат
+
+42-уязвимости XSS Cheat Sheet внедрить код
+XSS Filter Evasion Cheat Sheet
+https://cheatsheetseries.owasp.org/cheatsheets/XSS_Filter_Evasion_Cheat_Sheet.html
+
+-Проверить содержимое браузера 
+Ничего не содержит только токен непонятный который нельзя расшифровать
+
+GET /api/orders/2 HTTP/1.1
+Host: localhost:8888
+sec-ch-ua: "Not?A_Brand";v="8", "Chromium";v="108"
+Accept: application/json, text/plain, */*
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.5359.95 Safari/537.36
+sec-ch-ua-platform: "Windows"
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: cors
+Sec-Fetch-Dest: empty
+Referer: http://localhost:8888/status
+Accept-Encoding: gzip, deflate
+Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7
+Connection: close
+
+можно собрать данные на пользователей, по сути можно украсть базу клиентов
+id:1
+ownerId:2
+ownerName:"Лапшов Алексей Александрович"
+ownerPhone:"+79506114274"
+productId:6
+productName:"Подборка статей"
+productPrice:500
+published:1670484811
+status:"WAITING"
+
+{"id":2,"ownerId":3,"ownerName":"AlexeiLapshov","ownerPhone":"+79506107869","productId":5,"productName":"РџРѕРґР±РѕСЂРєР° С„РёР»СЊРјРѕРІ","productPrice":2000,"published":1670485061,"status":"WAITING"}
+
+http://localhost:8888/status
+
+можно написать скрипт который отправит запросы и соберет данных на всех клиентов, по сути украдет базу клиентов
+нужны доработки чтобы этот запрос /api/orders/1 выдавала информацию только по авторизации по аналогии с http://localhost:8888/api/orders/my 
+а на чужие заказы информацию не выдавала
+
+
+
+
