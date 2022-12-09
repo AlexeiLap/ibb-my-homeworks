@@ -35,9 +35,10 @@ sudo useradd student2 -g student2
 sudo chgrp student2 tmp
 chmod g+rwx tmp
 chmod o+r tmp
+chmod u-rwx tmp
 ```
 
-![](img/45/3-результаты-права-на%20папку.png)
+![](img/45/8-доработанные%20права.png)
 
 *Дайте ответ в виде снимков экрана.*
 
